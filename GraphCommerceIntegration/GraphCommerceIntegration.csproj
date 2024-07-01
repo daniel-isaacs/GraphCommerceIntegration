@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\jobe\.nuget\packages\optimizely.contentgraph.cms\3.9.0\contentFiles\any\any\modules\_protected\Optimizely.ContentGraph.Cms.NetCore\Optimizely.ContentGraph.Cms.NetCore.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPiServer.Commerce.Core" Version="14.23.0" />
+    <PackageReference Include="Optimizely.ContentGraph.Cms" Version="3.9.0" />
+  </ItemGroup>
+
+</Project>

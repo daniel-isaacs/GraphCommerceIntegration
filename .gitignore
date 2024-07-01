@@ -1,0 +1,8 @@
+
+*.vsidx
+*.v2
+/GraphCommerceIntegration/.vs/GraphCommerceIntegration/v17
+/GraphCommerceIntegration/.vs
+/GraphCommerceIntegration/bin
+/GraphCommerceIntegration/obj
+/GraphCommerceIntegration/modules
