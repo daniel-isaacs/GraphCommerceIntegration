@@ -1,12 +1,91 @@
 # Examples when using Foundation site
+
+## Try our pre-configured Graph account
+https://cg.optimizely.com/app/graphiql?auth=5m4F2pBpXPWehc3QGqFfvohgNtgYxHQOxfmKsnqhRYDpZTBU
+
+query ProductListing(
+  $languages: [Locales] = en
+  $searchText: String,
+  $brands: [String!],
+  $sizes: [String!],
+  $colors: [String!],
+  $minPrice: Float,
+  $maxPrice: Float,
+  $skip: Int = 0,
+  $limit: Int = 10,
+  $order: GenericProductOrderByInput = {       
+    _ranking: SEMANTIC,
+    DefaultMarketPrice: ASC 
+  }
+)
+{
+  GenericProduct(
+    locale: $languages
+    where:{
+      _fulltext: {
+        match: $searchText
+      }
+      DefaultMarketPrice: {
+        gte: $minPrice
+        lte: $maxPrice
+      }
+    }
+    skip: $skip,
+    limit: $limit
+    orderBy: $order
+  ) {
+    items {
+      Name
+      Code
+      ProductTeaser
+      DefaultMarketPrice
+      Brand
+      DefaultImageUrl
+    }
+    facets {
+      Brand(filters: $brands) {
+        name
+        count
+      }
+      Sizes(filters:$sizes, orderType: COUNT) {
+        name
+        count
+      }
+      Colors(filters:$colors, orderType: COUNT) {
+        name
+        count
+      }
+      DefaultMarketPrice(ranges: [
+        { to: 100 },
+        { from: 100, to: 200 },
+        { from: 200, to: 300 },
+        { from: 300, to: 400 },
+        { from: 400, to: 500 },
+        { from: 500, to: 600 },
+        { from: 600, to: 700 },
+        { from: 700, to: 800 },
+        { from: 800, to: 900 },
+        { from: 900, to: 1000 },
+        { from: 1000 },
+      ]) {
+        name
+        count
+      }
+    }
+  }
+}
+
+![image](https://github.com/jonasbergqvist/GraphCommerceIntegration/assets/1702570/6539b422-5b8e-4187-8c6c-910bc1130957)
+
+## Try it yourself using Foundation site
 1. Clone this repository
 2. Add a dependency to this repository from the Foundation project
 3. Add the following classes (below) to the Foundation project
 4. Start the Foundation site
 5. Configure the Foundation site to use a Graph account
-6. Run the "Optimizely Graph content synchronization job"
+6. Run the "Optimizely Graph content synchronization job"}
 
-## Default price for current market
+### Default price for current market
     [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
     public class DefaultPriceContentApiModel : ContentApiModelPriceBase
     {
@@ -30,7 +109,7 @@
         }
     }
 
-## Default image url for products and variations
+### Default image url for products and variations
     [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
     public class DefaultImageUrlContentApiModel : CommerceAssetApiModelBase<string>
     {
@@ -57,7 +136,7 @@
         }
     }
 
-## Aggregated Colors on Product
+### Aggregated Colors on Product
     [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
     public class ColorContentApiModel : ProductAggregationContentApiModelBase<string, GenericProduct, GenericVariant>
     {
@@ -71,7 +150,7 @@
         protected override Expression<Func<GenericVariant, string>> VariationProperty => (x) => x.Color;
     }
 
-## Aggregated Sizes on Product
+### Aggregated Sizes on Product
     [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
     public class SizeContentApiModel : ProductAggregationContentApiModelBase<string, GenericProduct, GenericVariant>
     {
