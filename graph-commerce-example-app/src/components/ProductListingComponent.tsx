@@ -80,22 +80,29 @@ export const ProductListing = graphql(/* GraphQL */ `
 const ProductListingComponent: FC = () => {
 
     const [searchText, setSearchText] = useState(() => '');
+
     const [brands, setBrands] = useState(() => new Array<string>());
     const [brandFacet, setBrandFacet] = useState(() => new Array<StringFacet>())
 
-    const { data } = useQuery(ProductListing, { variables: { searchText, brands } })
+    const [colors, setColors] = useState(() => new Array<string>());
+    const [colorFacet, setColorFacet] = useState(() => new Array<StringFacet>())
 
-    function facetBrandOptionChanged(): boolean {
-        if(data?.GenericProduct?.facets?.Brand?.length != brandFacet.length) {
+    const [sizes, setSizes] = useState(() => new Array<string>());
+    const [sizeFacet, setSizeFacet] = useState(() => new Array<StringFacet>())
+
+    const { data } = useQuery(ProductListing, { variables: { searchText, brands, colors, sizes } })
+
+    function facetOptionChanged(fasetQueryResult: StringFacet[], faset: StringFacet[]): boolean {
+        if(fasetQueryResult.length != faset.length) {
             return true
         }
 
-        for (let i = 0; i < data?.GenericProduct?.facets?.Brand.length; i++) {
-            if(data?.GenericProduct?.facets?.Brand[i]?.name !== brandFacet[i]?.name) {
+        for (let i = 0; i < fasetQueryResult.length; i++) {
+            if(fasetQueryResult[i]?.name !== faset[i]?.name) {
                 return true
             }
 
-            if(data?.GenericProduct?.facets?.Brand[i]?.count !== brandFacet[i]?.count) {
+            if(fasetQueryResult[i]?.count !== faset[i]?.count) {
                 return true
             }
         }
@@ -105,11 +112,23 @@ const ProductListingComponent: FC = () => {
 
     useEffect(() => {
         if(data?.GenericProduct?.facets?.Brand != undefined && data?.GenericProduct?.facets?.Brand) {
-          if(facetBrandOptionChanged()) {
+          if(facetOptionChanged(data?.GenericProduct?.facets?.Brand as StringFacet[], brandFacet)) {
             setBrandFacet(data.GenericProduct.facets?.Brand as StringFacet[])
           }
         }
-      }, [data?.GenericProduct?.facets]);
+
+        if(data?.GenericProduct?.facets?.Colors != undefined && data?.GenericProduct?.facets?.Colors) {
+            if(facetOptionChanged(data?.GenericProduct?.facets?.Colors as StringFacet[], colorFacet)) {
+              setColorFacet(data.GenericProduct.facets?.Colors as StringFacet[])
+            }
+        }
+
+        if(data?.GenericProduct?.facets?.Sizes != undefined && data?.GenericProduct?.facets?.Sizes) {
+            if(facetOptionChanged(data?.GenericProduct?.facets?.Sizes as StringFacet[], sizeFacet)) {
+              setSizeFacet(data.GenericProduct.facets?.Sizes as StringFacet[])
+            }
+        }
+      }, [brandFacet, colorFacet, sizeFacet, data?.GenericProduct?.facets]);
 
     return (
         <main className="overflow-hidden rounded-2xl">
@@ -120,12 +139,36 @@ const ProductListingComponent: FC = () => {
                     <nav className="mt-6">
                         <div>
                             <FacetsComponent
-                                brandFacet={brandFacet}
-                                brands={brands}
-                                setBrands={setBrands}
+                                headingText='Brands'
+                                facet={brandFacet}
+                                values={brands}
+                                setValues={setBrands}
                             />
                         </div>
                     </nav>
+
+                    <nav className="mt-6">
+                        <div>
+                            <FacetsComponent
+                                headingText='Colors'
+                                facet={colorFacet}
+                                values={colors}
+                                setValues={setColors}
+                            />
+                        </div>
+                    </nav>
+
+                    <nav className="mt-6">
+                        <div>
+                            <FacetsComponent
+                                headingText='Sizes'
+                                facet={sizeFacet}
+                                values={sizes}
+                                setValues={setSizes}
+                            />
+                        </div>
+                    </nav>
+
                 </div>
             </div>
             
@@ -138,11 +181,15 @@ const ProductListingComponent: FC = () => {
                 </header>
                 <main role="main" className="w-full h-full flex-grow p-3 overflow-auto">
                     <div className="tracking-widest text-xs title-font font-medium text-blue-300 mb-1">Hits: { data?.GenericProduct?.total }</div>  
-                    {
-                        data?.GenericProduct?.items?.map((item) => {
-                            return <GenericProductTeaserComponent key="" GenericProductTeaser={item!} />
-                        })
-                    }
+                    <div className="custom-screen text-gray-300">
+                        <div className="mt-12">
+                            <ul className="grid grid-cols-3 gap-10">
+                                { data?.GenericProduct?.items?.map((item) => {
+                                    return <GenericProductTeaserComponent key="" GenericProductTeaser={item!} />
+                                })}
+                            </ul>
+                        </div>
+                    </div>
                  </main>
                 </div>
             </div>
