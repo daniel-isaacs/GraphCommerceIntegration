@@ -1,3 +1,131 @@
+# Example repository for integrating Optimizely Customizable Commerce with Optimizely Graph
+This repository is an example implementation for integrating Customizable Commerce with Optimizely Graph. The repository contains mostly base classes, where you will have to create a concreat implementation on top of the base classes to get functionality in place (see examples using Foundation site below).
+
+## Classes in the repository
+
+### ServiceCollectionExtensions
+Contains the method 'AddCommerceGraph', which will register services in 'IServiceCollection'. This needs to be registered in Startup.cs in the site that will use the integration.
+
+#### Example of register ServiceCollectionExtensions
+```
+    public class Startup
+    {
+        ...
+        
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+          ...
+          services.AddCommerceGraph();
+        }
+
+        ...
+      }
+```
+
+### CommerceIndexTarget
+Makes the 'Optimizely Graph content synchronization job' include Commerce content when sending all content from the site to Graph
+
+### GraphCommerceLanguagesResolver
+Includes languages, that has been configured on catalog level, when pushing language information to Graph.
+
+### CommerceTypedContentApiModelPropertyBase
+Base type for adding custom logic to content. Other base classes in the repository is inheriting from this class.
+
+### ContentApiModelPriceBase
+Base class for prices. This base class makes it easy to include price information to Graph.
+
+#### Example
+```
+    [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
+    public class DefaultPriceContentApiModel : ContentApiModelPriceBase
+    {
+        private readonly ICurrentMarket _currentMarketService;
+
+        public DefaultPriceContentApiModel(
+            ContentTypeModelRepository contentTypeModelRepository,
+            IContentLoader contentLoader,
+            IPriceService priceService,
+            ICurrentMarket currentMarketService)
+            : base(contentTypeModelRepository, contentLoader, priceService)
+        {
+            _currentMarketService = currentMarketService;
+        }
+
+        public override string Name => "DefaultMarketPrice";
+
+        protected override IMarket GetMarket()
+        {
+            return _currentMarketService.GetCurrentMarket();
+        }
+    }
+```
+### ProductAggregationContentApiModelBase
+Base class for aggregating values in variation content to product content
+
+#### Examples
+```
+    [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
+    public class SizeContentApiModel : ProductAggregationContentApiModelBase<string, GenericProduct, GenericVariant>
+    {
+        public SizeContentApiModel(ContentTypeModelRepository contentTypeModelRepository, IContentLoader contentLoader)
+            : base(contentTypeModelRepository, contentLoader)
+        {
+        }
+
+        public override string Name => "Sizes";
+
+        protected override Expression<Func<GenericVariant, string>> VariationProperty => (x) => x.Size;
+    }
+```
+
+```
+    [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
+    public class ColorContentApiModel : ProductAggregationContentApiModelBase<string, GenericProduct, GenericVariant>
+    {
+        public ColorContentApiModel(ContentTypeModelRepository contentTypeModelRepository, IContentLoader contentLoader)
+            : base(contentTypeModelRepository, contentLoader)
+        {
+        }
+
+        public override string Name => "Colors";
+
+        protected override Expression<Func<GenericVariant, string>> VariationProperty => (x) => x.Color;
+    }
+```
+
+### CommerceAssetApiModelBase
+Base class for commerce assets.
+
+#### Example
+```
+    [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
+    public class DefaultImageUrlContentApiModel : CommerceAssetApiModelBase<string>
+    {
+        public DefaultImageUrlContentApiModel(ContentTypeModelRepository contentTypeModelRepository, IContentLoader contentLoader, IUrlResolver urlResolver)
+            : base(contentTypeModelRepository, contentLoader, urlResolver)
+        {
+        }
+
+        public override string Name => "DefaultImageUrl";
+
+        public override string NoValue => string.Empty;
+
+        protected override string GetAssets(IEnumerable<CommerceMedia> commerceMediaItems)
+        {
+            foreach(CommerceMedia media in commerceMediaItems.OrderBy(x => x.SortOrder))
+            {
+                if (ContentLoader.TryGet<IContentImage>(media.AssetLink, out var contentMedia))
+                {
+                    return GetUrl(media);
+                }
+            }
+
+            return NoValue;
+        }
+    }
+```
+
 ## Examples when using Foundation site
 I have created some examples using the Foundation project (https://github.com/episerver/Foundation), where I'm using this repository to get commerce content and prices send to Graph. I have also added aggregated values for "Color" and "Size" from variations to products, which makes it possible to create a great product listing page.
 
@@ -96,6 +224,12 @@ You can test using different variable values, for example
 4. Start the Foundation site
 5. Configure the Foundation site to use a Graph account
 6. Run the "Optimizely Graph content synchronization job"}
+
+#### Add Commerce Graph in Startup.cs
+Add the following to ConfigureServices method in Startup.cs
+```
+services.AddCommerceGraph();
+```
 
 #### Default price for current market
     [ServiceConfiguration(typeof(IContentApiModelProperty), Lifecycle = ServiceInstanceScope.Singleton)]
