@@ -12,6 +12,8 @@ namespace GraphCommerceIntegration
             services.AddSingleton<IIndexTarget, CommerceIndexTarget>();
             services.AddSingleton<ILanguagesResolver, GraphCommerceLanguagesResolver>();
 
+            services.AddSingleton<GraphCommerceEventListener>();
+
             return services;
         }
     }

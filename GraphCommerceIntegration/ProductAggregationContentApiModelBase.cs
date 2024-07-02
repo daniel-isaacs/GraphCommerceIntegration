@@ -59,6 +59,11 @@ namespace GraphCommerceIntegration
             return variationsHashset;
         }
 
+        protected virtual TPropertyType ModifyValue(TPropertyType value)
+        {
+            return value;
+        }
+
         private PropertyInfo GetPropertyInfo<TType, TReturn>(Expression<Func<TType, TReturn>> property)
         {
             LambdaExpression lambda = property;
