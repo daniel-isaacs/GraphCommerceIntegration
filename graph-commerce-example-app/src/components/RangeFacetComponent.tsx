@@ -28,49 +28,50 @@ const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxVa
         return () => clearTimeout(delayDebounceFn)
       }, [localLowValue, localHighValue, setLowValue, setHighValue])
 
-      const defaultClassName = "relative flex justify-center w-fullbg-indigo-400 h-10"
+      const facetValues = Array.from(facet?.values() ?? []).map((x) => x.count!)
+      const highestFacetCount = Math.max(...facetValues)
     return (
         <div className="border-b border-gray-200 py-6">
-            <div>
-            <span className="text-sm font-semibold text-gray-500"></span>
-            <div className="flex items-end flex-grow w-full mt-2 space-x-2 sm:space-x-3">
-                <div className="relative flex flex-col items-center flex-grow pb-5 group">
-                    <div className={defaultClassName}></div>
-                </div>
+            <div className="flex flex-col items-center w-full max-w-screen-md p-6 pb-6 bg-white rounded-lg shadow-xl sm:p-1">
+		        <div className="flex items-end flex-grow w-full mt-2 space-x-2 sm:space-x-3 h-16">
                 {
                     facet?.map((x, index) => {
-                        const className = "relative flex justify-center w-full bg-indigo-400 h-" + (x?.count ?? 0)*10
+                        let hValue = Math.round((x.count! / highestFacetCount) * 12)
+                        if(Math.abs(hValue % 2) == 1) {
+                            hValue = hValue - 1
+                        }
+                        const className = "bg-indigo-200 relative flex justify-center w-full h-" + hValue
                         return (
                             <div className="relative flex flex-col items-center flex-grow pb-5 group" key={index}>
-				                <span className="absolute top-0 hidden -mt-6 text-xs font-bold group-hover:block">{x?.name} ({x?.count})</span>
-				                <div className={className}></div>
+                                <span className="absolute top-0 hidden -mt-6 text-xs font-bold group-hover:block">{x?.count ?? '0'}</span>
+                                <div className={className}></div>
                             </div>
                         )
                     })
                 }
-            </div>
-        </div>
-        <div className="text-center">{ headingText }: {currentLowValue} - {currentHighValue}</div>
-        <div>
-            <RangeSlider
-                min={minValue}
-                max={maxValue}
-                step={10}
-                options={{
-                    leftInputProps: {
-                        value: currentLowValue,
-                        onChange: (e) => setLocalLowValue(Number(e.target.value)),
-                    },
-                    rightInputProps: {
-                        value: currentHighValue,
-                        onChange: (e) => setHighLocalValue(Number(e.target.value)),
-                    },
+		        </div>
+	        </div>
+            <div className="text-center">{ headingText }: {currentLowValue} - {currentHighValue}</div>
+            <div>
+                <RangeSlider
+                    min={minValue}
+                    max={maxValue}
+                    step={10}
+                    options={{
+                        leftInputProps: {
+                            value: currentLowValue,
+                            onChange: (e) => setLocalLowValue(Number(e.target.value)),
+                        },
+                        rightInputProps: {
+                            value: currentHighValue,
+                            onChange: (e) => setHighLocalValue(Number(e.target.value)),
+                        },
+                        }
                     }
-                }
-            />
+                />
+            </div>
+            
         </div>
-        
-    </div>
   );
 }
 

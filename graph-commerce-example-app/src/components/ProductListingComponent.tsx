@@ -105,7 +105,7 @@ const ProductListingComponent: FC = () => {
     const [sizeFacet, setSizeFacet] = useState(() => new Array<StringFacet>())
 
     const [lowPrice, setLowPrice] = useState(() => 0);
-    const [highPrice, setHighPrice] = useState(() => 550)
+    const [highPrice, setHighPrice] = useState(() => 600)
 
     const { data } = useQuery(ProductListing, { 
         variables: { 
@@ -182,7 +182,7 @@ const ProductListingComponent: FC = () => {
                                 setLowValue={setLowPrice}
                                 currentLowValue={lowPrice}
                                 minValue={0}
-                                maxValue={550}
+                                maxValue={600}
                                 facet={data?.GenericProduct?.facets?.DefaultMarketPrice as NumberFacet[]}
                             />
                         </div>
