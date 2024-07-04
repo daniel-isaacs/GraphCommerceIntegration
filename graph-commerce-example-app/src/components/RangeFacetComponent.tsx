@@ -1,5 +1,5 @@
 import { NumberFacet } from "@/graphql/graphql"
-import React, { Dispatch, FC, SetStateAction } from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { RangeSlider } from 'next-range-slider';
 import 'next-range-slider/dist/main.css';
 
@@ -15,7 +15,20 @@ interface RangeFacetProps {
 }
 
 const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxValue, currentLowValue, currentHighValue, facet, setLowValue, setHighValue }) => {
-  return (
+
+    const [localLowValue, setLocalLowValue] = useState(() => minValue);
+    const [localHighValue, setHighLocalValue] = useState(() => maxValue)
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+          setLowValue(localLowValue)
+          setHighValue(localHighValue)
+        }, 500)
+    
+        return () => clearTimeout(delayDebounceFn)
+      }, [localLowValue, localHighValue, setLowValue, setHighValue])
+
+    return (
     <div className="border-b border-gray-200 py-6">
         <div>
             <h3 className="-my-3 flow-root">{ headingText }: {currentLowValue} - {currentHighValue}</h3>
@@ -28,11 +41,11 @@ const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxVa
                 options={{
                     leftInputProps: {
                         value: currentLowValue,
-                        onChange: (e) => setLowValue(Number(e.target.value)),
+                        onChange: (e) => setLocalLowValue(Number(e.target.value)),
                     },
                     rightInputProps: {
                         value: currentHighValue,
-                        onChange: (e) => setHighValue(Number(e.target.value)),
+                        onChange: (e) => setHighLocalValue(Number(e.target.value)),
                     },
                     }
                 }
