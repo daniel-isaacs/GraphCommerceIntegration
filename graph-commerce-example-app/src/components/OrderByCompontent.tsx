@@ -50,7 +50,7 @@ const OrderByComponent: FC<OrderByProps> = ({ orderBy, setorderBy, orderByDirect
             <div className="ml-2 relative inline-block">
                 <button
                     type="button"
-                    className="px-4 py-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center"
+                    className="px-4 py-2 text-black bg-slate-400 hover:bg-slate-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center"
                     onClick={toggleOrderByInputDropdown}
                 >
                     Order By: {orderBy}<svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
@@ -96,7 +96,7 @@ const OrderByComponent: FC<OrderByProps> = ({ orderBy, setorderBy, orderByDirect
             <div className="ml-2 relative inline-block">
                 <button
                     type="button"
-                    className="px-4 py-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center"
+                    className="px-4 py-2 text-black bg-slate-400 hover:bg-slate-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center"
                     onClick={toggleOrderByDirectionDropdown}
                 >
                     Direction: {orderByDirection} <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">

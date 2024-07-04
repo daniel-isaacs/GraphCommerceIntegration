@@ -38,7 +38,7 @@ export const ProductListing = graphql(/* GraphQL */ `
                     {
 						Name: {
                             match: $searchText
-                            boost: 5
+                            boost: 20
                         }
                     }
                 ]
