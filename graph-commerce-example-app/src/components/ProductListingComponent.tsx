@@ -2,10 +2,12 @@ import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { graphql } from '@/graphql'
-import { StringFacet } from '@/graphql/graphql'
-import FacetsComponent from './FacetsComponent'
+import { GenericProductOrderByInput, NumberFacet, OrderBy, Ranking, StringFacet } from '@/graphql/graphql'
+import TermFacetComponent from './TermFacetComponent'
 import SearchTextComponent from './SearchTextComponent'
-import GenericProductTeaserComponent from './GenericProductTeaser'
+import GenericProductTeaserComponent from './GenericProductTeaserComponent'
+import OrderByComponent from './OrderByCompontent'
+import RangeFacetComponent from './RangeFacetComponent'
  
 export const ProductListing = graphql(/* GraphQL */ `
     query ProductListing(
@@ -80,6 +82,8 @@ export const ProductListing = graphql(/* GraphQL */ `
 const ProductListingComponent: FC = () => {
 
     const [searchText, setSearchText] = useState(() => '');
+    const [orderByInput, setOrderByInput] = useState(() => 'DefaultMarketPrice');
+    const [orderByDirection, setOrderByDirection] = useState(() => OrderBy.Asc);
 
     const [brands, setBrands] = useState(() => new Array<string>());
     const [brandFacet, setBrandFacet] = useState(() => new Array<StringFacet>())
@@ -90,7 +94,30 @@ const ProductListingComponent: FC = () => {
     const [sizes, setSizes] = useState(() => new Array<string>());
     const [sizeFacet, setSizeFacet] = useState(() => new Array<StringFacet>())
 
-    const { data } = useQuery(ProductListing, { variables: { searchText, brands, colors, sizes } })
+    const [lowPrice, setLowPrice] = useState(() => 0);
+    const [highPrice, setHighPrice] = useState(() => 1000)
+
+    const { data } = useQuery(ProductListing, { 
+        variables: { 
+            searchText, 
+            brands, 
+            colors, 
+            sizes,
+            minPrice: lowPrice,
+            maxPrice: highPrice,
+            order: getOrder()
+        } 
+    })
+
+    function getOrder(): GenericProductOrderByInput {
+        if(orderByInput === "Name") {
+            return { _ranking: Ranking.Semantic, Name: orderByDirection }
+        } else if (orderByInput === "Brand") {
+            return { _ranking: Ranking.Semantic, Brand: orderByDirection }
+        } else {
+            return { _ranking: Ranking.Semantic, DefaultMarketPrice: orderByDirection }
+        }
+    }
 
     function facetOptionChanged(fasetQueryResult: StringFacet[], faset: StringFacet[]): boolean {
         if(fasetQueryResult.length != faset.length) {
@@ -131,14 +158,29 @@ const ProductListingComponent: FC = () => {
       }, [brandFacet, colorFacet, sizeFacet, data?.GenericProduct?.facets]);
 
     return (
-        <main className="overflow-hidden rounded-2xl">
+        <main>
             <div className="flex">
-            <div className="relative hidden h-screen ml-4 shadow-lg lg:block w-80">
-                <div className="h-full rounded-2xl dark:bg-gray-700">
+            <div className="relative hidden lg:block w-80">
+                <div className="h-full rounded-2xl ml-4 bg-slate-50">
                     
-                    <nav className="mt-6">
+                    <nav className="mt-2 ml-4 mr-4">
                         <div>
-                            <FacetsComponent
+                            <RangeFacetComponent
+                                headingText='Price range'
+                                currentHighValue={highPrice}
+                                setHighValue={setHighPrice}
+                                setLowValue={setLowPrice}
+                                currentLowValue={lowPrice}
+                                minValue={0}
+                                maxValue={1000}
+                                facet={data?.GenericProduct?.facets?.DefaultMarketPrice as NumberFacet[]}
+                            />
+                        </div>
+                    </nav>
+
+                    <nav className="mt-2 ml-4">
+                        <div>
+                            <TermFacetComponent
                                 headingText='Brands'
                                 facet={brandFacet}
                                 values={brands}
@@ -147,9 +189,9 @@ const ProductListingComponent: FC = () => {
                         </div>
                     </nav>
 
-                    <nav className="mt-6">
+                    <nav className="mt-2 ml-4">
                         <div>
-                            <FacetsComponent
+                            <TermFacetComponent
                                 headingText='Colors'
                                 facet={colorFacet}
                                 values={colors}
@@ -158,9 +200,9 @@ const ProductListingComponent: FC = () => {
                         </div>
                     </nav>
 
-                    <nav className="mt-6">
+                    <nav className="mt-2 ml-4">
                         <div>
-                            <FacetsComponent
+                            <TermFacetComponent
                                 headingText='Sizes'
                                 facet={sizeFacet}
                                 values={sizes}
@@ -168,20 +210,32 @@ const ProductListingComponent: FC = () => {
                             />
                         </div>
                     </nav>
-
                 </div>
             </div>
             
-            <div className="w-full pl-0 md:p-6">
-                <header className="z-40 items-center w-full h-16 shadow-lg dark:bg-gray-700 rounded-2xl">
-                    <SearchTextComponent 
-                        searchText={searchText}
-                        setSearchText={setSearchText}
-                    />
+            <div className="w-full pl-0 md:p-2">
+                <header className="z-40 items-center w-full h-16 shadow-lg rounded-2xl bg-slate-50">
+                    <div className="relative z-20 flex flex-col justify-center h-full px-3 mx-auto flex-center"  style={{ background: "radial-gradient(141.61% 141.61% at 29.14% -11.49%, rgba(203, 213, 225, 0.15) 0%, rgba(203, 213, 225, 0) 57.72%)"}}>
+                        <div className="relative flex items-center w-full pl-1 lg:max-w-68 sm:pr-2 sm:ml-0 ">
+                            <SearchTextComponent 
+                                searchText={searchText}
+                                setSearchText={setSearchText}
+                             />
+                            <div className='mt-2 ml-4'>
+                                <OrderByComponent 
+                                    orderBy={orderByInput} 
+                                    setorderBy={setOrderByInput}
+                                    orderByDirection={orderByDirection}
+                                    setorderByDirection={setOrderByDirection}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </header>
                 <main role="main" className="w-full h-full flex-grow p-3 overflow-auto">
-                    <div className="tracking-widest text-xs title-font font-medium text-blue-300 mb-1">Hits: { data?.GenericProduct?.total }</div>  
-                    <div className="custom-screen text-gray-300">
+                    <div className="tracking-widest text-lg title-font font-medium  mb-1">Hits: { data?.GenericProduct?.total }</div>  
+                    
+                    <div className="custom-screen ">
                         <div className="mt-12">
                             <ul className="grid grid-cols-3 gap-10">
                                 { data?.GenericProduct?.items?.map((item) => {
