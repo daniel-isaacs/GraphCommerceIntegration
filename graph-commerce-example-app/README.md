@@ -8,6 +8,6 @@ You have to setup Foundation and run the Foundation example site to get images w
 
 ### Start application
 1. Install all dependencies: npm install
-2. Start codegen, to have it checking your typescript files, in case you want to update any query: npm run codeyen
-3. Build the application: npm run build
-4. Start the application: npm run dev
+2. Start codegen, to have it checking your typescript files, in case you want to update any query: ```npm run codeyen```
+3. Build the application: ```npm run build```
+4. Start the application: ```npm run dev```
