@@ -69,17 +69,17 @@ export const ProductListing = graphql(/* GraphQL */ `
                     count
                 }
                 DefaultMarketPrice(ranges: [
-                    { to: 100 },
-                    { from: 100, to: 200 },
-                    { from: 200, to: 300 },
-                    { from: 300, to: 400 },
-                    { from: 400, to: 500 },
-                    { from: 500, to: 600 },
-                    { from: 600, to: 700 },
-                    { from: 700, to: 800 },
-                    { from: 800, to: 900 },
-                    { from: 900, to: 1000 },
-                    { from: 1000 },
+                    { to: 50 },
+                    { from: 51, to: 100 },
+                    { from: 101, to: 150 },
+                    { from: 151, to: 200 },
+                    { from: 201, to: 250 },
+                    { from: 251, to: 300 },
+                    { from: 301, to: 350 },
+                    { from: 351, to: 400 },
+                    { from: 401, to: 450 },
+                    { from: 451, to: 500 },
+                    { from: 501 },
                 ]) {
                     name
                     count
@@ -105,7 +105,7 @@ const ProductListingComponent: FC = () => {
     const [sizeFacet, setSizeFacet] = useState(() => new Array<StringFacet>())
 
     const [lowPrice, setLowPrice] = useState(() => 0);
-    const [highPrice, setHighPrice] = useState(() => 1000)
+    const [highPrice, setHighPrice] = useState(() => 550)
 
     const { data } = useQuery(ProductListing, { 
         variables: { 
@@ -182,7 +182,7 @@ const ProductListingComponent: FC = () => {
                                 setLowValue={setLowPrice}
                                 currentLowValue={lowPrice}
                                 minValue={0}
-                                maxValue={1000}
+                                maxValue={550}
                                 facet={data?.GenericProduct?.facets?.DefaultMarketPrice as NumberFacet[]}
                             />
                         </div>
