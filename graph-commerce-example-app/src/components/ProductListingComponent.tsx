@@ -29,9 +29,19 @@ export const ProductListing = graphql(/* GraphQL */ `
         GenericProduct(
             locale: $languages
             where:{
-                _fulltext: {
-                    match: $searchText
-                }
+                _or:[
+                    {
+					    _fulltext: {
+                            match: $searchText
+                        }
+                    },
+                    {
+						Name: {
+                            match: $searchText
+                            boost: 5
+                        }
+                    }
+                ]
                 DefaultMarketPrice: {
                     gte: $minPrice
                     lte: $maxPrice
