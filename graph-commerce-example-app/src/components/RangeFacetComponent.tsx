@@ -33,7 +33,7 @@ const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxVa
     return (
         <div className="border-b border-gray-200 py-6">
             <div className="flex flex-col items-center w-full max-w-screen-md p-6 pb-6 rounded-lg shadow-xl sm:p-1">
-		        <div className="flex items-end flex-grow w-full mt-2 space-x-2 sm:space-x-3 h-16">
+		        <div className="flex items-end flex-grow w-full mt-2 space-x-2 sm:space-x-3">
                 {
                     facet?.map((x, index) => {
                         let hValue = Math.round((x.count! / highestFacetCount) * 12)
@@ -42,7 +42,7 @@ const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxVa
                         }
                         const className = "bg-indigo-200 relative flex justify-center w-full h-" + hValue
                         return (
-                            <div className="relative flex flex-col items-center flex-grow pb-5 group" key={index}>
+                            <div className="relative flex flex-col items-center flex-grow group" key={index}>
                                 <span className="absolute top-0 hidden -mt-6 text-xs font-bold group-hover:block">{x?.count ?? '0'}</span>
                                 <div className={className}></div>
                             </div>

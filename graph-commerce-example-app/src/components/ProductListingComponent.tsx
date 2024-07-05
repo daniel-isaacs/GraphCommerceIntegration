@@ -8,6 +8,7 @@ import SearchTextComponent from './SearchTextComponent'
 import GenericProductTeaserComponent from './GenericProductTeaserComponent'
 import OrderByComponent from './OrderByCompontent'
 import RangeFacetComponent from './RangeFacetComponent'
+import ProductDetailComponent from './ProductDetailComponent'
  
 export const ProductListing = graphql(/* GraphQL */ `
     query ProductListing(
@@ -107,6 +108,9 @@ const ProductListingComponent: FC = () => {
     const [lowPrice, setLowPrice] = useState(() => 0);
     const [highPrice, setHighPrice] = useState(() => 600)
 
+    const [showModal, setShowModal] = useState(false);
+    const [selectedCode, setSelectedCode] = useState(() => '');
+
     const { data } = useQuery(ProductListing, { 
         variables: { 
             searchText, 
@@ -121,11 +125,13 @@ const ProductListingComponent: FC = () => {
 
     function getOrder(): GenericProductOrderByInput {
         if(orderByInput === "Name") {
-            return { _ranking: Ranking.Semantic, Name: orderByDirection }
+            return { Name: orderByDirection }
         } else if (orderByInput === "Brand") {
-            return { _ranking: Ranking.Semantic, Brand: orderByDirection }
+            return { Brand: orderByDirection }
+        } else if(orderByInput === "DefaultMarketPrice") {
+            return { DefaultMarketPrice: orderByDirection }
         } else {
-            return { _ranking: Ranking.Semantic, DefaultMarketPrice: orderByDirection }
+            return { _ranking: Ranking.Semantic }
         }
     }
 
@@ -248,8 +254,13 @@ const ProductListingComponent: FC = () => {
                     <div className="custom-screen ">
                         <div className="mt-12">
                             <ul className="grid grid-cols-3 gap-10">
-                                { data?.GenericProduct?.items?.map((item) => {
-                                    return <GenericProductTeaserComponent key="" GenericProductTeaser={item!} />
+                                { data?.GenericProduct?.items?.map((item, index) => {
+                                    return <GenericProductTeaserComponent 
+                                        key={index} 
+                                        GenericProductTeaser={item!}
+                                        setSelectedCode={setSelectedCode}
+                                        setShowModal={setShowModal}
+                                        />
                                 })}
                             </ul>
                         </div>
@@ -257,6 +268,14 @@ const ProductListingComponent: FC = () => {
                  </main>
                 </div>
             </div>
+            { 
+                showModal ? (
+                    <ProductDetailComponent
+                        setOpen={setShowModal}
+                        code={selectedCode}
+                    />
+                ) : null
+            }
         </main>
     )
 }

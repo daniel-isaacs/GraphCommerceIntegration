@@ -1,7 +1,5 @@
 import { FragmentType, graphql, useFragment } from "@/graphql"
-import { useState } from "react";
-import ProductDetailComponent from "./ProductDetailComponent";
-import { it } from "node:test";
+import { Dispatch, FC, SetStateAction, useState } from "react"; 
 
 export const GenericProductTeaserFragment = graphql(/* GraphQL */ `
     fragment GenericProductTeaser on GenericProduct {
@@ -10,16 +8,17 @@ export const GenericProductTeaserFragment = graphql(/* GraphQL */ `
         DefaultMarketPrice
         Brand
         DefaultImageUrl
+        _score
     }
 `)
- 
-const GenericProductTeaserComponent = (props: {
+
+interface GenericProductTeaserProps {
     GenericProductTeaser: FragmentType<typeof GenericProductTeaserFragment>
-}) => {
-
-    const [showModal, setShowModal] = useState(false);
-    const [selectedCode, setSelectedCode] = useState(() => '');
-
+    setSelectedCode: Dispatch<SetStateAction<string>>;
+    setShowModal: Dispatch<SetStateAction<boolean>>;
+}
+ 
+const GenericProductTeaserComponent: FC<GenericProductTeaserProps> = ({ GenericProductTeaser, setSelectedCode, setShowModal}) => {
     const setSelected = (event: any) => {
         if(event?.target?.id) {
             setSelectedCode(event?.target?.id)
@@ -27,7 +26,7 @@ const GenericProductTeaserComponent = (props: {
         }
       }
 
-    const item = useFragment(GenericProductTeaserFragment, props.GenericProductTeaser)
+    const item = useFragment(GenericProductTeaserFragment, GenericProductTeaser)
     const imageUrl = 'https://localhost:44397' + item.DefaultImageUrl
         return (
             <div className="group relative">
@@ -45,14 +44,6 @@ const GenericProductTeaserComponent = (props: {
                 </div>
                 <p className="text-sm font-medium text-gray-900">${item.DefaultMarketPrice}</p>
                 </div>
-                { 
-                    showModal ? (
-                        <ProductDetailComponent
-                            setOpen={setShowModal}
-                            code={item.Code ?? ''}
-                        />
-                    ) : null
-                }
             </div>
         )
 }
