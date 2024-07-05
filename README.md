@@ -104,7 +104,11 @@ Contains the method 'AddCommerceGraph', which will register services in 'IServic
         public void ConfigureServices(IServiceCollection services)
         {
           ...
-          services.AddCommerceGraph();
+            services.AddContentGraph(x =>
+            {
+                x.IncludeInheritanceInContentType = true;
+                x.PreventFieldCollision = true;
+            });
         }
 
         ...
