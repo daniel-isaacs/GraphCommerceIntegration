@@ -2,6 +2,8 @@ import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { graphql } from '@/graphql'
 import parse from 'html-react-parser';
+import Image from 'next/image';
+const cmsImageHost = process.env.OPTIMIZELY_CMS_URL ?? "https://localhost:44397"
 
 export const ProductDetail = graphql(/* GraphQL */ `
     query ProductDetail(
@@ -16,12 +18,13 @@ export const ProductDetail = graphql(/* GraphQL */ `
         limit:1
     ) {
         items {
-        Name
-        Code
-        DefaultImageUrl
-        DefaultMarketPrice
-        Brand
-        LongDescription
+            Name
+            Code
+            DefaultImageUrl
+            DefaultMarketPrice
+            Brand
+            LongDescription
+            ProductTeaser
         }
     }
     }
@@ -33,15 +36,16 @@ interface ProductDetailProps {
 }
  
 const ProductDetailComponent: FC<ProductDetailProps> = ({code, setOpen}) => {
-
-    const { data } = useQuery(ProductDetail, { 
+    const { data, loading, error } = useQuery(ProductDetail, { 
         variables: { 
             code
         } 
     })
+    if (loading) {return "Loading product details..."}
+    if (error) return `Error! ${error.message}`;
 
     const item = data?.GenericProduct?.items![0]
-    const imageUrl = 'https://localhost:44397' + item?.DefaultImageUrl
+    const imageUrl = cmsImageHost + "/" + item?.DefaultImageUrl
     return (
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
@@ -49,7 +53,7 @@ const ProductDetailComponent: FC<ProductDetailProps> = ({code, setOpen}) => {
             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
-                <h3 className="text-3xl font-semibold">
+                <h3 className="text-3xl font-semibold dark:text-slate-800">
                     { item?.Name }
                 </h3>
                     <button
@@ -63,14 +67,17 @@ const ProductDetailComponent: FC<ProductDetailProps> = ({code, setOpen}) => {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                    <img src={imageUrl} alt={item?.Name ?? ''} className="h-full w-full object-cover object-center lg:h-full lg:w-full"/>
+                    <Image src={imageUrl} alt={item?.Name ?? ''} className="h-full w-full object-cover object-center lg:h-full lg:w-full" width="300" height="300" />
                 </div>
-                    <p className="my-4 text-slate-500 text-lg leading-relaxed">
-                        { parse(item?.LongDescription ?? '')}
-                    </p>
-                    <p className="my-4 text-slate-800 text-lg leading-relaxed">
-                        From: {item?.Brand}
-                    </p>
+                    <span className="my-4 text-slate-500 text-lg leading-relaxed">
+                        { parse(item?.ProductTeaser ?? '')}
+                    </span>
+                    <div className="flex items-center justify-between">
+                        <p className="my-4 text-slate-800 text-lg leading-relaxed">
+                            From: {item?.Brand}
+                        </p>
+                        <span className="font-bold text-lg dark:text-slate-800">${item?.DefaultMarketPrice?.toFixed(2)}</span>
+                    </div>
                 </div>
                 {/*footer*/}
             </div>
