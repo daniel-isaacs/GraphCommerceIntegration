@@ -1,6 +1,9 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
+const GRAPH_SINGLE_KEY = process.env.GRAPH_SINGLE_KEY
+const OPTIMIZELY_CMS_URL = process.env.OPTIMIZELY_CMS_URL
+
 let client: ApolloClient<any> | undefined = undefined;
 
 if (typeof window !== "undefined" && window.location !== undefined) {
@@ -28,7 +31,7 @@ if (typeof window !== "undefined" && window.location !== undefined) {
         });
 
         const communicationScript = document.createElement('script');
-        communicationScript.src = `https://app-ocxcjobe11znb7p003.cms.optimizely.com/Util/javascript/communicationinjector.js`;
+        communicationScript.src = `${OPTIMIZELY_CMS_URL}/Util/javascript/communicationinjector.js`;
         communicationScript.setAttribute('data-nscript', 'afterInteractive')
         document.body.appendChild(communicationScript);
     }
@@ -36,7 +39,7 @@ if (typeof window !== "undefined" && window.location !== undefined) {
 
 if (client === undefined) {
     const httpLink = createHttpLink({
-        uri: 'https://cg.optimizely.com/content/v2?auth=5m4F2pBpXPWehc3QGqFfvohgNtgYxHQOxfmKsnqhRYDpZTBU',
+        uri: `https://cg.optimizely.com/content/v2?auth=${GRAPH_SINGLE_KEY}`,
     });
 
     const authLink = setContext((_, { headers }) => {

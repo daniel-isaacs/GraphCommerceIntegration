@@ -2,6 +2,8 @@ import { FragmentType, graphql, useFragment } from "@/graphql"
 import { useState } from "react";
 import ProductDetailComponent from "./ProductDetailComponent";
 import { it } from "node:test";
+import Image from 'next/image';
+const cmsImageHost = process.env.OPTIMIZELY_CMS_URL ?? "https://localhost:44397"
 
 export const GenericProductTeaserFragment = graphql(/* GraphQL */ `
     fragment GenericProductTeaser on GenericProduct {
@@ -28,11 +30,12 @@ const GenericProductTeaserComponent = (props: {
       }
 
     const item = useFragment(GenericProductTeaserFragment, props.GenericProductTeaser)
-    const imageUrl = 'https://localhost:44397' + item.DefaultImageUrl
+    const imageUrl = cmsImageHost + item.DefaultImageUrl
         return (
             <div className="group relative">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                    <img src={imageUrl} alt={item.Name ?? ''} id={item.Code ?? ''} onClick={setSelected} className="h-full w-full object-cover object-center lg:h-full lg:w-full"/>
+                    {/* <img src={imageUrl} alt={item.Name ?? ''} id={item.Code ?? ''} onClick={setSelected} className="h-full w-full object-cover object-center lg:h-full lg:w-full"/> */}
+                    <Image src={imageUrl} alt={item.Name ?? ''} id={item.Code ?? ''} onClick={setSelected} className="h-full w-full object-cover object-center lg:h-full lg:w-full" width="300" height="300" />
                 </div>
                 <div className="mt-4 flex justify-between">
                 <div>

@@ -22,7 +22,7 @@ const TermFacetComponent: FC<TermFacetProps> = ({ headingText, values, facet, se
     };
 
     return (
-      <div className="border-b border-gray-200 py-6">
+      <div className="border-b border-gray-200 py-6 dark:text-slate-800">
         <h3 className="-my-3 flow-root">{ headingText }</h3>
         <div className="pt-6" id="filter-section-0">
           <div className="space-y-4">

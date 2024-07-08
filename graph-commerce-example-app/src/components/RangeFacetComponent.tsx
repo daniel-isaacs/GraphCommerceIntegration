@@ -31,7 +31,7 @@ const RangeFacetComponent: FC<RangeFacetProps> = ({ headingText, minValue, maxVa
       const facetValues = Array.from(facet?.values() ?? []).map((x) => x.count!)
       const highestFacetCount = Math.max(...facetValues)
     return (
-        <div className="border-b border-gray-200 py-6">
+        <div className="border-b border-gray-200 py-6 dark:text-slate-800">
             <div className="flex flex-col items-center w-full max-w-screen-md p-6 pb-6 rounded-lg shadow-xl sm:p-1">
 		        <div className="flex items-end flex-grow w-full mt-2 space-x-2 sm:space-x-3 h-16">
                 {

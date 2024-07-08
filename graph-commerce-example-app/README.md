@@ -6,6 +6,11 @@ This project is creating a product listing with facets and search capabilities f
 ### Start Foundation site
 You have to setup Foundation and run the Foundation example site to get images working. The reason for this is that images will be received from the actual CMS, and we need to have a CMS running to receive the images
 
+### Update environment variables
+1. Copy ".env" to ".env.local"
+2. Add your Foundation URL -- required for product images, per above
+3. Update Optimizely Graph single key (or, use the default value)
+
 ### Start application
 1. Install all dependencies: npm install
 2. Start codegen, to have it checking your typescript files, in case you want to update any query: ```npm run codegen```

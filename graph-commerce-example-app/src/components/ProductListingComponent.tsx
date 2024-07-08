@@ -248,8 +248,8 @@ const ProductListingComponent: FC = () => {
                     <div className="custom-screen ">
                         <div className="mt-12">
                             <ul className="grid grid-cols-3 gap-10">
-                                { data?.GenericProduct?.items?.map((item) => {
-                                    return <GenericProductTeaserComponent key="" GenericProductTeaser={item!} />
+                                { data?.GenericProduct?.items?.map((item, index) => {
+                                    return <GenericProductTeaserComponent key={index} GenericProductTeaser={item!} />
                                 })}
                             </ul>
                         </div>
