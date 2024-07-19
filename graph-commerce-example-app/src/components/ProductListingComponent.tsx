@@ -6,7 +6,7 @@ import { GenericProductOrderByInput, NumberFacet, OrderBy, Ranking, StringFacet 
 import TermFacetComponent from './TermFacetComponent'
 import SearchTextComponent from './SearchTextComponent'
 import GenericProductTeaserComponent from './GenericProductTeaserComponent'
-import OrderByComponent from './OrderByCompontent'
+import OrderByComponent from './OrderByComponent'
 import RangeFacetComponent from './RangeFacetComponent'
  
 export const ProductListing = graphql(/* GraphQL */ `
@@ -129,17 +129,17 @@ const ProductListingComponent: FC = () => {
         }
     }
 
-    function facetOptionChanged(fasetQueryResult: StringFacet[], faset: StringFacet[]): boolean {
-        if(fasetQueryResult.length != faset.length) {
+    function facetOptionChanged(facetQueryResult: StringFacet[], facet: StringFacet[]): boolean {
+        if(facetQueryResult.length != facet.length) {
             return true
         }
 
-        for (let i = 0; i < fasetQueryResult.length; i++) {
-            if(fasetQueryResult[i]?.name !== faset[i]?.name) {
+        for (let i = 0; i < facetQueryResult.length; i++) {
+            if(facetQueryResult[i]?.name !== facet[i]?.name) {
                 return true
             }
 
-            if(fasetQueryResult[i]?.count !== faset[i]?.count) {
+            if(facetQueryResult[i]?.count !== facet[i]?.count) {
                 return true
             }
         }

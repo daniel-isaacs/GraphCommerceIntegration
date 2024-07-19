@@ -66,8 +66,8 @@ const ProductDetailComponent: FC<ProductDetailProps> = ({code, setOpen}) => {
                 </div>
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
-                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                    <Image src={imageUrl} alt={item?.Name ?? ''} className="h-full w-full object-cover object-center lg:h-full lg:w-full" width="300" height="300" />
+                <div className="relative overflow-hidden rounded-md bg-gray-200 lg:h-80">
+                    <Image src={imageUrl} alt={item?.Name ?? ''} fill className="rounded-t-lg object-contain object-center" />
                 </div>
                     <span className="my-4 text-slate-500 text-lg leading-relaxed">
                         { parse(item?.ProductTeaser ?? '')}
