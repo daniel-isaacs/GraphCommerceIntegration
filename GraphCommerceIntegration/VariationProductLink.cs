@@ -11,8 +11,8 @@ namespace GraphCommerceIntegration
     {
         public string Name => "VariationProduct";
 
-        public string From => "ContentLink.Id";
+        public string From => "ProductIDs";
 
-        public string To => "ProductIDs";
+        public string To => "ContentLink.Id";
     }
 }
